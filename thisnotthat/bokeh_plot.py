@@ -378,6 +378,8 @@ class BokehPlotPane(pn.viewable.Viewer, pn.reactive.Reactive):
         name: str = "Plot",
     ):
         super().__init__(name=name)
+        data_X = [x for x in data[:,0]] # ABC: Does this work?
+        data_Y = [x for x in data[:,1]]
         if labels is None:
             labels = ["unlabelled"] * len(data)
         if type(marker_size) in (int, float):
