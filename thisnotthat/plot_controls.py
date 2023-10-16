@@ -423,6 +423,6 @@ class RebuildWidget(pn.reactive.Reactive):
         return self.link(
             plot,
             data_X="data_X",
-            data_X="data_X",
+            data_Y="data_Y",
             bidirectional=True,
         )
