@@ -654,6 +654,24 @@ class BokehPlotPane(pn.viewable.Viewer, pn.reactive.Reactive):
 
         pn.io.push_notebook(self.pane)
 
+    @param.depends("data_X", watch=True) #ABC: adding forced update for data_X, data_Y
+    def _update_data_X(self):
+        if len(self.data_X) == 0:
+            self.data_source.data["data_X"] = self._base_data_X
+        else:
+            self.data_source.data["data_X"] = [x for x in self.data_X]
+
+        pn.io.push_notebook(self.pane)
+
+    @param.depends("data_Y", watch=True) #ABC: adding forced update for data_X, data_Y
+    def _update_data_Y(self):
+        if len(self.data_Y) == 0:
+            self.data_source.data["data_Y"] = self._base_data_Y
+        else:
+            self.data_source.data["data_Y"] = [x for x in self.data_Y]
+
+        pn.io.push_notebook(self.pane)
+
     @param.depends("color_by_palette", "color_by_vector", watch=True)
     def _update_color_by(self) -> None:
         if len(self.color_by_palette) == 0:
