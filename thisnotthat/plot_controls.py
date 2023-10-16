@@ -331,7 +331,7 @@ class RebuildWidget(pn.reactive.Reactive):
         same order as the points in the plot. The ``PlotControlWidget`` will use dtypes of columns and column names
         of this dataframe to populate a variety of selectors that can be linked to a plot.
 
-    rebuild_choice: str (optional, default = "randomize")
+    rebuild_choice: str (optional, default = "terrible")
         How to do the rebuilding when you click the button.
 
     width: int or None (optional, default = None)
@@ -354,7 +354,7 @@ class RebuildWidget(pn.reactive.Reactive):
         self,
         raw_dataframe: pd.DataFrame,
         *,
-        rebuild_choice: str = "randomize",
+        rebuild_choice: str = "terrible",
         width: Optional[int] = None,
         height: Optional[int] = None,
         title: str = "#### Plot Controls",
@@ -365,7 +365,7 @@ class RebuildWidget(pn.reactive.Reactive):
 
         self.rebuild_choice = pn.widgets.Select(
             name="Rebuild choice",
-            options=["randomize"], # ABC: this is where we put the replotting options.
+            options=["terrible"], # ABC: this is where we put the replotting options.
         )
         self.rebuild_choice.param.watch(
             self._options_changed, "value", onlychanged=True
@@ -381,7 +381,6 @@ class RebuildWidget(pn.reactive.Reactive):
             self.rebuild_choice,
             pn.layout.Divider(margin=(0, 10, 10, 10), height=5),
             self.apply_changes,
-            self.bad_scaling_alert,
             width=width,
             height=height,
         )
@@ -391,13 +390,15 @@ class RebuildWidget(pn.reactive.Reactive):
 
     def _options_changed(self, event) -> None:
         self.apply_changes.disabled = False
-        self.bad_scaling_alert.visible = False
 
     def _apply_changes(self, event) -> None: # ZZX: This is presumably where we actually DO something.
-        if self.color_by_column.value == "Default":
-            self.color_by_vector = pd.Series([])
+        if self.rebuild_choice == "terrible":
+            # choose n appropriately
+            self.data_X = [1.1,2,3,4,5]
+            self.data_Y = [1.1,2,3,4,5]
         else:
-            values = self.dataframe[self.color_by_column.value]
+            self.data_X = [1.1,2,3,4,5]
+            self.data_Y = [1.1,2,3,4,5]
 
         self.apply_changes.disabled = True
 
