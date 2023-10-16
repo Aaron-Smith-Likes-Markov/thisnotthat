@@ -319,3 +319,109 @@ class PlotControlWidget(pn.reactive.Reactive):
             marker_size="marker_size",
             bidirectional=True,
         )
+
+
+class RebuildWidget(pn.reactive.Reactive):
+    """A pane that is intended to let you rerun your embedding and draw the results.
+
+    Parameters
+    ----------
+    raw_dataframe: DataFrame
+        The dataframe of associated metadata. The dataframe should have one row for each point in the plot, in the
+        same order as the points in the plot. The ``PlotControlWidget`` will use dtypes of columns and column names
+        of this dataframe to populate a variety of selectors that can be linked to a plot.
+
+    rebuild_choice: str (optional, default = "randomize")
+        How to do the rebuilding when you click the button.
+
+    width: int or None (optional, default = None)
+        The width of the pane. If ``None`` the pane will size itself based on its contents.
+
+    height: int or None (optional, default = None)
+        The height of the pane. If ``None`` the pane will size itself based on its contents.
+
+    title: str (optional, default = "#### Plot Controls")
+        A title (in markdown) to place at the top of the pane.
+
+    name: str (optional, default = "Plot Controls")
+        The panel name of the pane. See panel documentation for more details.
+    """
+
+    data_X = param.List([], item_type=float, doc="Marker size")
+    data_Y = param.List([], item_type=float, doc="Marker size")
+
+    def __init__(
+        self,
+        raw_dataframe: pd.DataFrame,
+        *,
+        rebuild_choice: str = "randomize",
+        width: Optional[int] = None,
+        height: Optional[int] = None,
+        title: str = "#### Plot Controls",
+        name: str = "Plot Controls",
+    ):
+        super().__init__(name=name)
+        self.dataframe = raw_dataframe
+
+        self.rebuild_choice = pn.widgets.Select(
+            name="Rebuild choice",
+            options=["randomize"], # ABC: this is where we put the replotting options.
+        )
+        self.rebuild_choice.param.watch(
+            self._options_changed, "value", onlychanged=True
+        )
+
+        self.apply_changes = pn.widgets.Button(
+            name="Rebuild Embedding", button_type="success", disabled=True,
+        )
+        self.apply_changes.on_click(self._reapply_changes)
+
+        self.pane = pn.WidgetBox(
+            title,
+            self.rebuild_choice,
+            pn.layout.Divider(margin=(0, 10, 10, 10), height=5),
+            self.apply_changes,
+            self.bad_scaling_alert,
+            width=width,
+            height=height,
+        )
+
+    def _get_model(self, *args, **kwds):
+        return self.pane._get_model(*args, **kwds)
+
+    def _options_changed(self, event) -> None:
+        self.apply_changes.disabled = False
+        self.bad_scaling_alert.visible = False
+
+    def _apply_changes(self, event) -> None: # ZZX: This is presumably where we actually DO something.
+        if self.color_by_column.value == "Default":
+            self.color_by_vector = pd.Series([])
+        else:
+            values = self.dataframe[self.color_by_column.value]
+
+        self.apply_changes.disabled = True
+
+    # I have no idea why, but this fixes issues with marker size changes in plots. Don't ask
+    def _reapply_changes(self, event):
+        self._apply_changes(None)
+        self._apply_changes(None)
+
+    def link_to_plot(self, plot):
+        """Link this pane to a plot pane using a default set of params that can sensibly be linked.
+
+        Parameters
+        ----------
+        plot: PlotPane
+            The plot pane to link to.
+
+        Returns
+        -------
+        link:
+            The link object.
+        """
+        return self.link(
+            plot,
+            data_X="data_X",
+            data_X="data_X",
+            bidirectional=True,
+        )
