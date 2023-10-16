@@ -9,7 +9,7 @@ from .search import (
 )
 from .instance_viewer import InformationPane
 from .deckgl_plot import DeckglPlotPane
-from .plot_controls import PlotControlWidget
+from .plot_controls import PlotControlWidget, RebuildWidget
 from .map_cluster_labelling import JointVectorLabelLayers, MetadataLabelLayers
 from thisnotthat.summary.plot import PlotSummaryPane
 from thisnotthat.summary.dataframe import DataSummaryPane
