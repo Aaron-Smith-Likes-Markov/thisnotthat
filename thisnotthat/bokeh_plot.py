@@ -328,6 +328,8 @@ class BokehPlotPane(pn.viewable.Viewer, pn.reactive.Reactive):
     )
     marker_size = param.List([], item_type=float, doc="Marker size")
     hover_text = param.List([], item_type=str, doc="Hover text")
+    data_X = param.List([],item_type=float,doc="X Values") # AMS: Added parameter
+    data_Y = param.List([],item_type=float,doc="X Values") # AMS: Added parameter
 
     def _update_selected(self, attr, old, new) -> None:
         self.selected = self.data_source.selected.indices
