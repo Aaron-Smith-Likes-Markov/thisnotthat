@@ -357,8 +357,8 @@ class RebuildWidget(pn.reactive.Reactive):
         rebuild_choice: str = "terrible",
         width: Optional[int] = None,
         height: Optional[int] = None,
-        title: str = "#### Plot Controls",
-        name: str = "Plot Controls",
+        title: str = "#### Rebuild Embedding",
+        name: str = "Rebuild Embedding",
     ):
         super().__init__(name=name)
         self.dataframe = raw_dataframe
